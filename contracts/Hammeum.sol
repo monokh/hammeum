@@ -11,7 +11,7 @@ contract Hammeum {
 		bool isValue;
 	}
 
-	mapping (address => Bank) banks;
+	mapping (address => Bank) public banks;
 
 	modifier bankSetup {
 		require(banks[msg.sender].isValue);

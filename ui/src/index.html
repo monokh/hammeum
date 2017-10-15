@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>HAMMEUM</title>
+  </head>
+  <body>
+    <header>
+      <img src="img/logo.svg" />
+    </header>
+
+    <div class="container">
+      <div class="row">
+
+        <div class="one-half column" m-if="!setup">
+          <h5>Initial Setup</h5>
+          <form>
+            <label for="destination">Destination</label>
+            <input type="text" value="0x0" id="destination">
+            <label for="initialAmount">Initial Amount</label>
+            <input type="number" value="0" step="0.1" id="initialAmount">
+            <label for="transferTime">Transfer Time</label>
+            <input type="number" value="{{ nextHourTimestamp }}" id="transferTime">
+            <label for="recurringInDays">Recurring in days: </label>
+            <input type="number" value="30" id="recurringInDays">
+            <div><button type="button" class="button-primary" m-on:click="sendSetup">Setup</button></div>
+          </form>
+        </div>
+
+        <div class="one-half column" m-if="setup">
+          <h5>Send</h5>
+          <div>From: {{ wallet.address }}</div>
+          <form>
+            <label for="sendAmount">Amount</label>
+            <input type="number" value="0" step="0.1" id="sendAmount">
+            <button type="button" class="button-primary" m-on:click="sendAmount">Send</button>
+          </form>
+        </div>
+
+        <div class="one-half column" m-if="setup">
+          <h5>Bank</h5>
+          <div>Balance: {{ bank.balance }} ETH</div> 
+          <div>Destination: {{ bank.destination }}</div>
+          <div>Transfer Time: {{ bank.transferTime }}</div> 
+          <div>Recurring: every {{ bank.recurringInDays }} days</div> 
+        </div>
+
+      </div>
+    </div>
+
+  </body>
+</html>
