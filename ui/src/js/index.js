@@ -8,7 +8,7 @@ var abi = require('../../../build/contracts/Hammeum.json').abi;
 
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 
-const HAMMEUM_ADDRESS = '0x7fa4642c660459b92c1353ae5c261e46188145be';
+const HAMMEUM_ADDRESS = '0xbc12074d6ddbe6cb597bcbe47f4c3bede49770e8';
 const HAMMEUM = new web3.eth.Contract(abi, HAMMEUM_ADDRESS);
 
 const app = new Moon({
@@ -17,6 +17,7 @@ const app = new Moon({
     nextHourTimestamp: moment().add(10, 'minutes').unix(),
     setup: false,
     wallet: {
+      disabled: false,
       address: '0x0'
     },
     bank: {
@@ -54,6 +55,10 @@ const app = new Moon({
 });
 
 web3.eth.getAccounts().then((accounts) => {
+  if(accounts.length < 1) {
+    app.set('wallet.disabled', true);
+    return;
+  }
   var account = accounts[0];
   app.set('wallet.address', account);
   getBank();
