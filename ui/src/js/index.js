@@ -45,7 +45,8 @@ const app = new Moon({
       web3.eth.sendTransaction({
         from: app.get('wallet').address,
         to: HAMMEUM_ADDRESS,
-        value: web3.utils.toWei(amount, 'ether')
+        value: web3.utils.toWei(amount, 'ether'),
+        gas: 100000
       }).then((tx) => {
         console.log(tx);
         getBank();
@@ -65,7 +66,6 @@ web3.eth.getAccounts().then((accounts) => {
 });
 
 function getBank() {
-  console.log(app.get('wallet').address)
   HAMMEUM.methods.banks(app.get('wallet').address).call().then((bank) => {
     console.log(bank);
     app.set('setup', bank.isValue);
