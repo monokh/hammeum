@@ -11,11 +11,15 @@ var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 const HAMMEUM_ADDRESS = '0x12d1cb090b747cfeeb207569087c24694ec2cfb8';
 const HAMMEUM = new web3.eth.Contract(abi, HAMMEUM_ADDRESS);
 
+const DATE_FORMAT = 'DD/MM/YYYY';
+const TIME_FORMAT = 'HH:mm';
+const DATE_TIME_FORMAT = DATE_FORMAT + ' ' + TIME_FORMAT;
+
 const app = new Moon({
   el: "body",
   data: {
-    nextHourDate: moment().add(10, 'minutes').format('DD/MM/YYYY'),
-    nextHourTime: moment().add(10, 'minutes').format('HH:mm'),
+    nextHourDate: moment().add(10, 'minutes').format(DATE_FORMAT),
+    nextHourTime: moment().add(10, 'minutes').format(TIME_FORMAT),
     setup: false,
     wallet: {
       disabled: false,
@@ -33,7 +37,7 @@ const app = new Moon({
       const initialAmount = document.getElementById('initialAmount').value;
       const transferDate = document.getElementById('transferDate').value;
       const transferTime = document.getElementById('transferTime').value;
-      const transferDateTime = moment(transferDate + ' ' + transferTime, 'DD/MM/YYYY HH:mm')
+      const transferDateTime = moment(transferDate + ' ' + transferTime, DATE_TIME_FORMAT)
       if(!transferDateTime.isValid()) {
         return; 
       }
@@ -78,6 +82,7 @@ function getBank() {
     if(bank.isValue) {
       app.set('bank', bank);
       app.set('bank.balance', web3.utils.fromWei(app.get('bank').balance, 'ether'));
+      app.set('bank.transferDateTime', moment(app.get('bank.transferTime', 'x')).format(DATE_TIME_FORMAT))
     }
   })
 }
