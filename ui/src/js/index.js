@@ -78,11 +78,12 @@ web3.eth.getAccounts().then((accounts) => {
 
 function getBank() {
   HAMMEUM.methods.banks(app.get('wallet').address).call().then((bank) => {
+    console.log(bank);
     app.set('setup', bank.isValue);
     if(bank.isValue) {
       app.set('bank', bank);
-      app.set('bank.balance', web3.utils.fromWei(app.get('bank').balance, 'ether'));
-      app.set('bank.transferDateTime', moment(app.get('bank.transferTime', 'x')).format(DATE_TIME_FORMAT))
+      app.set('bank.balance', web3.utils.fromWei(bank.balance, 'ether'));
+      app.set('bank.transferDateTime', moment(bank.transferTime, 'x').format(DATE_TIME_FORMAT))
     }
   })
 }
