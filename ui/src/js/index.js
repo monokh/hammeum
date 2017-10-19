@@ -8,13 +8,14 @@ var abi = require('../../../build/contracts/Hammeum.json').abi;
 
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 
-const HAMMEUM_ADDRESS = '0xbc12074d6ddbe6cb597bcbe47f4c3bede49770e8';
+const HAMMEUM_ADDRESS = '0x12d1cb090b747cfeeb207569087c24694ec2cfb8';
 const HAMMEUM = new web3.eth.Contract(abi, HAMMEUM_ADDRESS);
 
 const app = new Moon({
   el: "body",
   data: {
-    nextHourTimestamp: moment().add(10, 'minutes').unix(),
+    nextHourDate: moment().add(10, 'minutes').format('DD/MM/YYYY'),
+    nextHourTime: moment().add(10, 'minutes').format('HH:mm'),
     setup: false,
     wallet: {
       disabled: false,
@@ -30,9 +31,15 @@ const app = new Moon({
     sendSetup: function() {
       const destination = document.getElementById('destination').value;
       const initialAmount = document.getElementById('initialAmount').value;
+      const transferDate = document.getElementById('transferDate').value;
       const transferTime = document.getElementById('transferTime').value;
+      const transferDateTime = moment(transferDate + ' ' + transferTime, 'DD/MM/YYYY HH:mm')
+      if(!transferDateTime.isValid()) {
+        return; 
+      }
+      const transferTimestamp = transferDateTime.unix();
       const recurringInDays = document.getElementById('recurringInDays').value;
-      HAMMEUM.methods.setup(destination, transferTime, recurringInDays).send({
+      HAMMEUM.methods.setup(destination, transferTimestamp, recurringInDays).send({
         value: web3.utils.toWei(initialAmount, 'ether'), 
         from: this.get('wallet').address})
       .then((tx) => {
@@ -67,7 +74,6 @@ web3.eth.getAccounts().then((accounts) => {
 
 function getBank() {
   HAMMEUM.methods.banks(app.get('wallet').address).call().then((bank) => {
-    console.log(bank);
     app.set('setup', bank.isValue);
     if(bank.isValue) {
       app.set('bank', bank);
