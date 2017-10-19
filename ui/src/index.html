@@ -5,46 +5,47 @@
     <title>HAMMEUM</title>
   </head>
   <body>
-    <header>
-      <img src="img/logo.svg" />
-    </header>
 
     <div class="container">
+        <header>
+          <img src="img/logo.svg" />
+          <p>Contract Address: <strong>{{ contractAddress }}</strong></p>
+        </header>
       <div class="row">
 
-        <div class="one-half column" m-if="!setup">
+        <div class="column" m-if="!setup">
           <h5>Initial Setup</h5>
           <form>
             <label for="destination">Destination</label>
-            <input type="text" value="0x0" id="destination">
+            <input type="text" value="0x0" id="destination" class="u-full-width">
             <label for="initialAmount">Initial Amount</label>
-            <input type="number" value="0" step="0.1" id="initialAmount">
+            <input type="number" value="0" step="0.1" id="initialAmount" class="u-full-width">
             <label for="transferDate">Transfer Date</label>
-            <input type="text" value="{{ nextHourDate }}" id="transferDate">
+            <input type="text" value="{{ nextHourDate }}" id="transferDate" class="u-full-width">
             <label for="transferTime">Transfer Time</label>
-            <input type="text" value="{{ nextHourTime }}" id="transferTime">
+            <input type="text" value="{{ nextHourTime }}" id="transferTime" class="u-full-width">
             <label for="recurringInDays">Recurring in days: </label>
-            <input type="number" value="30" id="recurringInDays">
+            <input type="number" value="30" id="recurringInDays" class="u-full-width">
             <div><button type="button" class="button-primary" m-on:click="sendSetup">Setup</button></div>
           </form>
         </div>
 
-        <div class="one-half column" m-if="setup">
-          <h5>Send</h5>
-          <div>From: {{ wallet.address }}</div>
-          <form>
-            <label for="sendAmount">Amount</label>
-            <input type="number" value="0" step="0.1" id="sendAmount">
-            <button type="button" class="button-primary" m-on:click="sendAmount">Send</button>
-          </form>
-        </div>
-
-        <div class="one-half column" m-if="setup">
+        <div class="column" m-if="setup">
           <h5>Bank</h5>
           <div>Balance: {{ bank.balance }} ETH</div> 
           <div>Destination: {{ bank.destination }}</div>
           <div>Transfer Time: {{ bank.transferDateTime }}</div> 
           <div>Recurring: every {{ bank.recurringInDays }} days</div> 
+        </div>
+
+        <div class="column" m-if="setup">
+          <h5>Send</h5>
+          <div>From: {{ wallet.address }}</div>
+          <form>
+            <label for="sendAmount">Amount</label>
+            <input type="number" value="0" step="0.1" id="sendAmount" class="u-full-width">
+            <button type="button" class="button-primary" m-on:click="sendAmount">Send</button>
+          </form>
         </div>
 
       </div>

@@ -6,10 +6,10 @@ var Moon = require('moonjs');
 var moment = require('moment');
 var abi = require('../../../build/contracts/Hammeum.json').abi;
 
-var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+var web3;
+var HAMMEUM;
 
 const HAMMEUM_ADDRESS = '0x12d1cb090b747cfeeb207569087c24694ec2cfb8';
-const HAMMEUM = new web3.eth.Contract(abi, HAMMEUM_ADDRESS);
 
 const DATE_FORMAT = 'DD/MM/YYYY';
 const TIME_FORMAT = 'HH:mm';
@@ -18,6 +18,7 @@ const DATE_TIME_FORMAT = DATE_FORMAT + ' ' + TIME_FORMAT;
 const app = new Moon({
   el: "body",
   data: {
+    contractAddress: HAMMEUM_ADDRESS,
     nextHourDate: moment().add(10, 'minutes').format(DATE_FORMAT),
     nextHourTime: moment().add(10, 'minutes').format(TIME_FORMAT),
     setup: false,
@@ -66,16 +67,6 @@ const app = new Moon({
   }
 });
 
-web3.eth.getAccounts().then((accounts) => {
-  if(accounts.length < 1) {
-    app.set('wallet.disabled', true);
-    return;
-  }
-  var account = accounts[0];
-  app.set('wallet.address', account);
-  getBank();
-});
-
 function getBank() {
   HAMMEUM.methods.banks(app.get('wallet').address).call().then((bank) => {
     console.log(bank);
@@ -83,11 +74,31 @@ function getBank() {
     if(bank.isValue) {
       app.set('bank', bank);
       app.set('bank.balance', web3.utils.fromWei(bank.balance, 'ether'));
-      app.set('bank.transferDateTime', moment(bank.transferTime, 'x').format(DATE_TIME_FORMAT))
+      app.set('bank.transferDateTime', moment(bank.transferTime, 'X').format(DATE_TIME_FORMAT));
     }
   })
 }
 
-setInterval(() => {
-  getBank();
-}, 10000);
+function startSyncer() {
+  setInterval(() => {
+    getBank();
+  }, 10000);
+}
+
+
+window.addEventListener('load', function() {
+  web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+  HAMMEUM = new web3.eth.Contract(abi, HAMMEUM_ADDRESS);
+  
+  web3.eth.getAccounts().then((accounts) => {
+    if(accounts.length < 1) {
+      app.set('wallet.disabled', true);
+      return;
+    }
+    var account = accounts[0];
+    app.set('wallet.address', account);
+    getBank();
+  });
+
+  startSyncer();
+});
